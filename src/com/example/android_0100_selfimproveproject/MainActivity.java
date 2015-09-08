@@ -6,6 +6,7 @@ import com.example.android_0100_selfimproveproject.activities.ActivityCollector;
 import com.example.android_0100_selfimproveproject.activities.BaseActivity;
 import com.example.android_0100_selfimproveproject.activities.TargetActivity;
 import com.example.android_0100_selfimproveproject.activities.TargetAdapter;
+import com.example.android_0100_selfimproveproject.database.DataDeleter;
 import com.example.android_0100_selfimproveproject.database.DataFetcher;
 import com.example.android_0100_selfimproveproject.database.DataUpdater;
 import com.example.android_0100_selfimproveproject.database.MyDatabaseHelper;
@@ -14,6 +15,9 @@ import com.example.android_0100_selfimproveproject.service.Scheme;
 import com.example.android_0100_selfimproveproject.service.Target;
 import com.example.android_0100_selfimproveproject.utils.Tools;
 
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -88,9 +92,7 @@ public class MainActivity extends BaseActivity implements OnClickListener
                 // Because of existence of image button, event will not focus on
                 // parents.
                 Target target = scheme.getTargets().get(position);
-                TargetActivity.anctionStart(MainActivity.this, target.getName(), target.getDescription(),
-                        Tools.formatTime(target.getTime()), Tools.formatTime(target.getEndTime()), target.getValue(),
-                        target.isDone(), Constant.RESULT_TAG);
+                dialog(target);
             }
         });
     }
@@ -157,7 +159,7 @@ public class MainActivity extends BaseActivity implements OnClickListener
 
                 if (!isAgenda)
                 {
-                    Backlog backlog = new Backlog(new Date(),name, start, end, des, value, isdone);
+                    Backlog backlog = new Backlog(new Date(), name, start, end, des, value, isdone);
                     addNewTarget(backlog);
                 }
                 fetchAll();
@@ -184,10 +186,47 @@ public class MainActivity extends BaseActivity implements OnClickListener
 
     }
 
+    private void deleteTarget(Target target)
+    {
+        Toast.makeText(MainActivity.this, "deleting...", Toast.LENGTH_SHORT).show();
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        DataDeleter.deleteTarget(db, target);
+        scheme.getTargets().remove(target);
+        scheme.check();
+    }
+
     private boolean saveAll()
     {
         Toast.makeText(MainActivity.this, "saving...", Toast.LENGTH_SHORT).show();
         saveTodayTargets();
         return false;
+    }
+
+    private void dialog(final Target target)
+    {
+        AlertDialog.Builder builder = new Builder(MainActivity.this);
+        builder.setMessage("确认删除" + target.getName() + "吗？");
+        builder.setTitle("删除");
+        builder.setPositiveButton("确认", new android.content.DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                dialog.dismiss();
+                deleteTarget(target);
+            }
+        });
+        builder.setNegativeButton("取消", new android.content.DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                dialog.dismiss();
+                TargetActivity.anctionStart(MainActivity.this, target.getName(), target.getDescription(),
+                        Tools.formatTime(target.getTime()), Tools.formatTime(target.getEndTime()), target.getValue(),
+                        target.isDone(), Constant.RESULT_TAG);
+            }
+        });
+        builder.create().show();
     }
 }
