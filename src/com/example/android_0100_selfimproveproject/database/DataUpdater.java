@@ -160,4 +160,10 @@ public class DataUpdater
         Log.d(Constant.DB_TAG, "insert: " + target.toString());
         return saved;
     }
+    
+//    @SuppressLint("SimpleDateFormat")
+//    public static boolean updateTarget(SQLiteDatabase db, String name, String date, String des, String startTime, String endTime, int value, int isdone)
+//    {
+//        return false;
+//    }
 }

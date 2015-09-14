@@ -17,6 +17,7 @@ import com.example.android_0100_selfimproveproject.utils.Tools;
 
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -76,6 +77,7 @@ public class MainActivity extends BaseActivity implements OnClickListener
         TextView titleText = (TextView) findViewById(R.id.title_text);
         titleText.setText(scheme.toShortString());
         initList();
+        db.close();
     }
 
     private void initList()
@@ -86,13 +88,15 @@ public class MainActivity extends BaseActivity implements OnClickListener
         listView.setOnItemClickListener(new OnItemClickListener()
         {
 
+            @SuppressWarnings("deprecation")
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
                 // Because of existence of image button, event will not focus on
                 // parents.
                 Target target = scheme.getTargets().get(position);
-                dialog(target);
+//                deleteDialog(target);
+                MainActivity.this.showDialog(scheme.getTargets().indexOf(target));
             }
         });
     }
@@ -101,6 +105,7 @@ public class MainActivity extends BaseActivity implements OnClickListener
     {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         DataUpdater.updateScheme(db, scheme);
+        db.close();
     }
 
     private void addNewTarget(Target target)
@@ -108,6 +113,7 @@ public class MainActivity extends BaseActivity implements OnClickListener
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         scheme.getTargets().add(target);
         DataUpdater.insertTarget(db, scheme, target);
+        db.close();
     }
 
     @Override
@@ -144,17 +150,17 @@ public class MainActivity extends BaseActivity implements OnClickListener
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
+        String name = data.getStringExtra(Constant.NAME_PARA);
+        String des = data.getStringExtra(Constant.DESCRIPTION_PARA);
+        String start = data.getStringExtra(Constant.START_PARA);
+        String end = data.getStringExtra(Constant.END_PARA);
+        int value = data.getIntExtra(Constant.VALUE_PARA, Constant.BASED_VALUE);
+        boolean isdone = data.getBooleanExtra(Constant.ISDONE_PARA, false);
         switch (requestCode)
         {
-        case Constant.RESULT_TAG:
+        case Constant.RESULT_ADD_TAG:
             if (resultCode == RESULT_OK)
             {
-                String name = data.getStringExtra(Constant.NAME_PARA);
-                String des = data.getStringExtra(Constant.DESCRIPTION_PARA);
-                String start = data.getStringExtra(Constant.START_PARA);
-                String end = data.getStringExtra(Constant.END_PARA);
-                int value = data.getIntExtra(Constant.VALUE_PARA, Constant.BASED_VALUE);
-                boolean isdone = data.getBooleanExtra(Constant.ISDONE_PARA, false);
                 boolean isAgenda = false;
 
                 if (!isAgenda)
@@ -164,6 +170,20 @@ public class MainActivity extends BaseActivity implements OnClickListener
                 }
                 fetchAll();
             }
+            break;
+        case Constant.RESULT_MOD_TAG:
+            if (resultCode == RESULT_OK)
+            {
+                Target target = Tools.getTargetByScheme(scheme, name);
+                target.setDescription(des);
+                target.setValue(value);
+                target.setTime(Tools.parseTimeByDate(new Date(), start));
+                target.setEndTime(Tools.parseTimeByDate(new Date(), end));
+                saveAll();
+                fetchAll();
+            }
+            break;
+        
         }
     }
 
@@ -182,7 +202,7 @@ public class MainActivity extends BaseActivity implements OnClickListener
     private void onAddTarget()
     {
         Log.d(Constant.SERVICE_TAG, "into onAddTarget()");
-        TargetActivity.anctionStart(MainActivity.this, null, null, null, null, 0, false, Constant.RESULT_TAG);
+        TargetActivity.anctionStart(MainActivity.this, null, null, null, null, 0, false, Constant.RESULT_ADD_TAG);
 
     }
 
@@ -193,6 +213,7 @@ public class MainActivity extends BaseActivity implements OnClickListener
         DataDeleter.deleteTarget(db, target);
         scheme.getTargets().remove(target);
         scheme.check();
+        db.close();
     }
 
     private boolean saveAll()
@@ -202,7 +223,7 @@ public class MainActivity extends BaseActivity implements OnClickListener
         return false;
     }
 
-    private void dialog(final Target target)
+    private void deleteDialog(final Target target)
     {
         AlertDialog.Builder builder = new Builder(MainActivity.this);
         builder.setMessage("确认删除" + target.getName() + "吗？");
@@ -222,11 +243,46 @@ public class MainActivity extends BaseActivity implements OnClickListener
             public void onClick(DialogInterface dialog, int which)
             {
                 dialog.dismiss();
-                TargetActivity.anctionStart(MainActivity.this, target.getName(), target.getDescription(),
-                        Tools.formatTime(target.getTime()), Tools.formatTime(target.getEndTime()), target.getValue(),
-                        target.isDone(), Constant.RESULT_TAG);
             }
         });
         builder.create().show();
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id)
+    {
+        final int index  = id;
+        Dialog dialog = null;
+        Builder builder = new android.app.AlertDialog.Builder(this);
+        // 设置对话框的标题
+        builder.setTitle("选择您的操作");
+        // 添加按钮，android.content.DialogInterface.OnClickListener.OnClickListener
+        builder.setItems(R.array.dialog_actions, new android.content.DialogInterface.OnClickListener()
+        {
+            public void onClick(DialogInterface dialog, int which)
+            {
+                String action = getResources().getStringArray(R.array.dialog_actions)[which];
+                if (action.equals("删除"))
+                {
+                    dialog.dismiss();
+                    deleteDialog(scheme.getTargets().get(index));
+                }
+                else if (action.equals("修改"))
+                {
+                    dialog.dismiss();
+                    Target target = scheme.getTargets().get(index);
+                    TargetActivity.anctionStart(MainActivity.this, target.getName(), target.getDescription(),
+                            Tools.formatTime(target.getTime()), Tools.formatTime(target.getEndTime()), target.getValue(),
+                            target.isDone(), Constant.RESULT_MOD_TAG);
+                }
+                else
+                {
+                    dialog.dismiss();
+                }
+            }
+        });
+        // 创建一个列表对话框
+        dialog = builder.create();
+        return dialog;
     }
 }

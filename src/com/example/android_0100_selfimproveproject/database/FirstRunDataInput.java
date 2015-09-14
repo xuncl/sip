@@ -10,7 +10,7 @@ public class FirstRunDataInput
 {
     SQLiteDatabase db;
     ContentValues values;
-    String mdate = "2015/09/07";
+    String mdate = "2015/09/14";
     int yesterdayvalue = 555;
     int todayvalue = 597;
     int isagenda = 1;

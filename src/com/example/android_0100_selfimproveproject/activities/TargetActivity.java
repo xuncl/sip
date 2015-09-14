@@ -24,6 +24,7 @@ public class TargetActivity extends BaseActivity
     private EditText valueEdit;
     private CheckBox isdoneBox;
     private Button save;
+    private boolean modifyFlag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -32,6 +33,7 @@ public class TargetActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.new_target);
+        modifyFlag = false;
         save = (Button) findViewById(R.id.button_save);
         nameEdit = (EditText) findViewById(R.id.target_name);
         desEdit = (EditText) findViewById(R.id.target_description);
@@ -42,13 +44,13 @@ public class TargetActivity extends BaseActivity
         Intent intent = getIntent();
         String tname = intent.getStringExtra(Constant.NAME_PARA);
         if (!Tools.isEmpty(tname)){
+            modifyFlag = true;
             nameEdit.setText(tname);
             desEdit.setText(intent.getStringExtra(Constant.DESCRIPTION_PARA));
             startEdit.setText(intent.getStringExtra(Constant.START_PARA));
             endEdit.setText(intent.getStringExtra(Constant.END_PARA));
             valueEdit.setText(""+intent.getIntExtra(Constant.VALUE_PARA, 0));
             isdoneBox.setChecked(intent.getBooleanExtra(Constant.ISDONE_PARA, false));
-            save.setEnabled(false);
         }
         save.setOnClickListener(new OnClickListener()
         {

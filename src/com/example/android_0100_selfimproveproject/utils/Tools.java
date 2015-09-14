@@ -3,8 +3,12 @@ package com.example.android_0100_selfimproveproject.utils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import android.annotation.SuppressLint;
+
 import com.example.android_0100_selfimproveproject.Constant;
+import com.example.android_0100_selfimproveproject.service.Scheme;
+import com.example.android_0100_selfimproveproject.service.Target;
+
+import android.annotation.SuppressLint;
 
 public class Tools
 {
@@ -49,5 +53,37 @@ public class Tools
     {
         SimpleDateFormat sdf = new SimpleDateFormat(Constant.TIME_FOMMAT_PATTERN);
         return sdf.format(time);
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    public static Date parseTimeByDate(Date date, String time)
+    {
+        SimpleDateFormat sdf = new SimpleDateFormat(Constant.DATE_FOMMAT_PATTERN);
+        SimpleDateFormat sdf2 = new SimpleDateFormat(Constant.DATE_FOMMAT_PATTERN + Constant.TIME_FOMMAT_PATTERN);
+        String mdate = sdf.format(date);
+        Date stime = new Date();
+        try
+        {
+            stime = sdf2.parse(mdate + time);
+        }
+        catch (ParseException e)
+        {
+        }
+        return stime;
+    }
+
+    public static Target getTargetByScheme(Scheme scheme, String name)
+    {
+        if ((null != scheme) && (null != name))
+        {
+            for (Target target : scheme.getTargets())
+            {
+                if (name.equals(target.getName()))
+                {
+                    return target;
+                }
+            }
+        }
+        return null;
     }
 }

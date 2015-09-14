@@ -41,7 +41,11 @@ public final class Constant
     public static final String VALUE_PARA = "value";
     public static final String ISDONE_PARA = "isdone";
     
-    public static final int RESULT_TAG = 1;
+    public static final String DIALOG_MODIFY = "ÐÞ¸Ä";
+    public static final String DIALOG_DELETE = "É¾³ý";
+    
+    public static final int RESULT_ADD_TAG = 1;
+    public static final int RESULT_MOD_TAG = 2;
     
     public static final int DEFAULT_ICONID = R.drawable.target_icon;
     
