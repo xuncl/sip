@@ -39,6 +39,10 @@ public class DataFetcher
                 scheme = new Scheme(yesterdayScheme);
                 DataUpdater.insertScheme(db, scheme);
             }
+            else
+            {
+                scheme = new Scheme();
+            }
         }
         return scheme;
     }
@@ -85,24 +89,28 @@ public class DataFetcher
             todayValue = cursor.getInt(cursor.getColumnIndex(Constant.COL_TODAYVALUE));
             yesterdayValue = cursor.getInt(cursor.getColumnIndex(Constant.COL_YESTERDAYVALUE));
             boolean isDone = (cursor.getInt(cursor.getColumnIndex(Constant.COL_ISDONE)) > 0);
-            if (isAgenda){
-                Agenda agenda = new Agenda(name,mDate,startTime,endTime,description,mValue,mInterval,mMaxValue,isDone);
+            if (isAgenda)
+            {
+                Agenda agenda = new Agenda(name, mDate, startTime, endTime, description, mValue, mInterval, mMaxValue,
+                        isDone);
                 targets.add(agenda);
                 date = agenda.getTime();
-            }else{
-                Backlog backlog = new Backlog(name,mDate,startTime,endTime,description,mValue,isDone);
+            }
+            else
+            {
+                Backlog backlog = new Backlog(name, mDate, startTime, endTime, description, mValue, isDone);
                 targets.add(backlog);
                 date = backlog.getTime();
             }
         }
         while (cursor.moveToNext());
-        
+
         Scheme scheme = new Scheme(date, todayValue, yesterdayValue, targets);
-        
+
         // May check yesterday's scheme
         scheme.check();
-        
+
         return scheme;
     }
-    
+
 }

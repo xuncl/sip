@@ -64,7 +64,6 @@ public class TargetAdapter extends ArrayAdapter<Target>
             @Override
             public void onClick(View v)
             {
-                Log.d("Alarm", "button click start");
                 ImageView ib = (ImageView) v;
                 Target tgt = (Target) v.getTag();
                 tgt.check();
@@ -78,7 +77,6 @@ public class TargetAdapter extends ArrayAdapter<Target>
                 {
                     ib.setImageResource(R.drawable.target_done);
                 }
-                Log.d("Alarm", tgt.toString());
 
             }
         });

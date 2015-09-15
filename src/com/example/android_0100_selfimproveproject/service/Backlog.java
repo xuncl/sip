@@ -1,14 +1,11 @@
 package com.example.android_0100_selfimproveproject.service;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.example.android_0100_selfimproveproject.Constant;
 import com.example.android_0100_selfimproveproject.utils.Tools;
 
 import android.annotation.SuppressLint;
-import android.util.Log;
 
 public class Backlog extends Target
 {
@@ -49,20 +46,8 @@ public class Backlog extends Target
         if (Tools.isEmpty(description))
             endTime = Constant.DEFAULT_DESCRIPTION;
         this.setName(name);
-        SimpleDateFormat sdf_D = new SimpleDateFormat(Constant.DATE_FOMMAT_PATTERN);
-        String mdate = sdf_D.format(date);
-        SimpleDateFormat sdf_T = new SimpleDateFormat(Constant.DATE_FOMMAT_PATTERN + Constant.TIME_FOMMAT_PATTERN);
-        Date time = new Date();
-        Date endtime = new Date();
-        try
-        {
-            time = sdf_T.parse(mdate + startTime);
-            endtime = sdf_T.parse(mdate + endTime);
-        }
-        catch (ParseException e)
-        {
-            Log.e(Constant.BASE_ACTIVITY_TAG, e.toString());
-        }
+        Date time = Tools.parseTimeByDate(date, startTime);
+        Date endtime = Tools.parseTimeByDate(date, endTime);
         this.setTime(time);
         this.setEndTime(endtime);
         this.setIconId(Constant.DEFAULT_ICONID);
@@ -86,18 +71,8 @@ public class Backlog extends Target
         if (Tools.isEmpty(description))
             endTime = Constant.DEFAULT_DESCRIPTION;
         this.setName(name);
-        SimpleDateFormat sdf = new SimpleDateFormat(Constant.DATE_FOMMAT_PATTERN + Constant.TIME_FOMMAT_PATTERN);
-        Date time = new Date();
-        Date endtime = new Date();
-        try
-        {
-            time = sdf.parse(mDate + startTime);
-            endtime = sdf.parse(mDate + endTime);
-        }
-        catch (ParseException e)
-        {
-            Log.e(Constant.BASE_ACTIVITY_TAG, e.toString());
-        }
+        Date time = Tools.parseTimeByDate(mDate, startTime);
+        Date endtime = Tools.parseTimeByDate(mDate, endTime);
         this.setTime(time);
         this.setEndTime(endtime);
         this.setIconId(Constant.DEFAULT_ICONID);

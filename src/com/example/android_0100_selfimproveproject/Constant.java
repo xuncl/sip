@@ -9,6 +9,7 @@ public final class Constant
     public static final String DEFAULT_DESCRIPTION = "";
     
     public static final int BASED_VALUE = 2;
+    public static final int BASED_INTERVAL = 0;
     
     public static final String DATE_FOMMAT_PATTERN = "yyyy/MM/dd";
     public static final String TIME_FOMMAT_PATTERN = "HH:mm";
@@ -40,6 +41,9 @@ public final class Constant
     public static final String END_PARA = "end";
     public static final String VALUE_PARA = "value";
     public static final String ISDONE_PARA = "isdone";
+    public static final String ISAGENDA_PARA = "isagenda";
+    public static final String INTERVAL_PARA = "interval";
+    public static final String MAXVALUE_PARA = "maxvalue";
     
     public static final String DIALOG_MODIFY = "ÐÞ¸Ä";
     public static final String DIALOG_DELETE = "É¾³ý";

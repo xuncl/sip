@@ -7,6 +7,7 @@ import com.example.android_0100_selfimproveproject.Constant;
 import com.example.android_0100_selfimproveproject.service.Agenda;
 import com.example.android_0100_selfimproveproject.service.Scheme;
 import com.example.android_0100_selfimproveproject.service.Target;
+import com.example.android_0100_selfimproveproject.utils.LogUtils;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
@@ -56,7 +57,7 @@ public class DataUpdater
             };
             db.update(Constant.TABLE_NAME, values, whereClause, whereArgs);
             values.clear();
-            Log.d(Constant.DB_TAG, "update: " + target.toString());
+            LogUtils.d(Constant.DB_TAG, "update: " + target.toString());
         }
         db.setTransactionSuccessful();
         db.endTransaction();
@@ -107,7 +108,7 @@ public class DataUpdater
             values.put(Constant.COL_ISDONE, target.isDone() ? 1 : 0);
             db.insert(Constant.TABLE_NAME, null, values);
             values.clear();
-            Log.d(Constant.DB_TAG, "insert: " + target.toString());
+            LogUtils.d(Constant.DB_TAG, "insert: " + target.toString());
         }
         db.setTransactionSuccessful();
         db.endTransaction();
@@ -157,7 +158,7 @@ public class DataUpdater
         values.clear();
         db.setTransactionSuccessful();
         db.endTransaction();
-        Log.d(Constant.DB_TAG, "insert: " + target.toString());
+        LogUtils.d(Constant.DB_TAG, "insert: " + target.toString());
         return saved;
     }
     

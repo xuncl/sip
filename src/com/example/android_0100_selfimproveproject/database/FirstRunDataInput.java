@@ -1,16 +1,16 @@
 package com.example.android_0100_selfimproveproject.database;
 
 import com.example.android_0100_selfimproveproject.Constant;
+import com.example.android_0100_selfimproveproject.utils.LogUtils;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 public class FirstRunDataInput
 {
     SQLiteDatabase db;
     ContentValues values;
-    String mdate = "2015/09/14";
+    String mdate = "2015/09/15";
     int yesterdayvalue = 555;
     int todayvalue = 597;
     int isagenda = 1;
@@ -58,6 +58,6 @@ public class FirstRunDataInput
         values.put(Constant.COL_ISDONE, isdone);
         db.insert(Constant.TABLE_NAME, null, values);
         values.clear();
-        Log.d(Constant.DB_TAG, "INSERT INITIAL VALUE:" + name);
+        LogUtils.d(Constant.DB_TAG, "INSERT INITIAL VALUE:" + name);
     }
 }

@@ -10,9 +10,11 @@ import com.example.android_0100_selfimproveproject.database.DataDeleter;
 import com.example.android_0100_selfimproveproject.database.DataFetcher;
 import com.example.android_0100_selfimproveproject.database.DataUpdater;
 import com.example.android_0100_selfimproveproject.database.MyDatabaseHelper;
+import com.example.android_0100_selfimproveproject.service.Agenda;
 import com.example.android_0100_selfimproveproject.service.Backlog;
 import com.example.android_0100_selfimproveproject.service.Scheme;
 import com.example.android_0100_selfimproveproject.service.Target;
+import com.example.android_0100_selfimproveproject.utils.LogUtils;
 import com.example.android_0100_selfimproveproject.utils.Tools;
 
 import android.app.AlertDialog;
@@ -22,7 +24,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -36,7 +37,7 @@ import android.widget.Toast;
 public class MainActivity extends BaseActivity implements OnClickListener
 {
 
-    private Scheme scheme;
+    private Scheme scheme = new Scheme();
 
     private MyDatabaseHelper dbHelper;
 
@@ -71,7 +72,7 @@ public class MainActivity extends BaseActivity implements OnClickListener
 
     private void refreshTargets()
     {
-        Date today = new Date();
+        Date today = scheme.getDate();
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         scheme = DataFetcher.fetchScheme(db, today);
         TextView titleText = (TextView) findViewById(R.id.title_text);
@@ -95,7 +96,7 @@ public class MainActivity extends BaseActivity implements OnClickListener
                 // Because of existence of image button, event will not focus on
                 // parents.
                 Target target = scheme.getTargets().get(position);
-//                deleteDialog(target);
+                // deleteDialog(target);
                 MainActivity.this.showDialog(scheme.getTargets().indexOf(target));
             }
         });
@@ -156,17 +157,22 @@ public class MainActivity extends BaseActivity implements OnClickListener
         String end = data.getStringExtra(Constant.END_PARA);
         int value = data.getIntExtra(Constant.VALUE_PARA, Constant.BASED_VALUE);
         boolean isdone = data.getBooleanExtra(Constant.ISDONE_PARA, false);
+        boolean isagenda = data.getBooleanExtra(Constant.ISAGENDA_PARA, false);
+        int interval = data.getIntExtra(Constant.INTERVAL_PARA, Constant.BASED_INTERVAL);
+        int maxvalue = data.getIntExtra(Constant.MAXVALUE_PARA, Constant.BASED_VALUE);
         switch (requestCode)
         {
         case Constant.RESULT_ADD_TAG:
             if (resultCode == RESULT_OK)
             {
-                boolean isAgenda = false;
 
-                if (!isAgenda)
+                if (!isagenda)
                 {
-                    Backlog backlog = new Backlog(new Date(), name, start, end, des, value, isdone);
+                    Backlog backlog = new Backlog(scheme.getDate(), name, start, end, des, value, isdone);
                     addNewTarget(backlog);
+                }else{
+                    Agenda agenda = new Agenda(scheme.getDate(), name, start, end, des, value, interval, maxvalue, isdone);
+                    addNewTarget(agenda);
                 }
                 fetchAll();
             }
@@ -183,7 +189,7 @@ public class MainActivity extends BaseActivity implements OnClickListener
                 fetchAll();
             }
             break;
-        
+
         }
     }
 
@@ -201,8 +207,9 @@ public class MainActivity extends BaseActivity implements OnClickListener
 
     private void onAddTarget()
     {
-        Log.d(Constant.SERVICE_TAG, "into onAddTarget()");
-        TargetActivity.anctionStart(MainActivity.this, null, null, null, null, 0, false, Constant.RESULT_ADD_TAG);
+        LogUtils.d(Constant.SERVICE_TAG, "into onAddTarget()");
+        TargetActivity.anctionStart(MainActivity.this, null, null, null, null, 0, false, false, 0, 0,
+                Constant.RESULT_ADD_TAG);
 
     }
 
@@ -214,6 +221,7 @@ public class MainActivity extends BaseActivity implements OnClickListener
         scheme.getTargets().remove(target);
         scheme.check();
         db.close();
+        fetchAll();
     }
 
     private boolean saveAll()
@@ -251,7 +259,7 @@ public class MainActivity extends BaseActivity implements OnClickListener
     @Override
     protected Dialog onCreateDialog(int id)
     {
-        final int index  = id;
+        final int index = id;
         Dialog dialog = null;
         Builder builder = new android.app.AlertDialog.Builder(this);
         // 设置对话框的标题
@@ -271,9 +279,18 @@ public class MainActivity extends BaseActivity implements OnClickListener
                 {
                     dialog.dismiss();
                     Target target = scheme.getTargets().get(index);
-                    TargetActivity.anctionStart(MainActivity.this, target.getName(), target.getDescription(),
-                            Tools.formatTime(target.getTime()), Tools.formatTime(target.getEndTime()), target.getValue(),
-                            target.isDone(), Constant.RESULT_MOD_TAG);
+                    if (target instanceof Agenda)
+                    {
+                        Agenda agenda = (Agenda) target;
+                        TargetActivity.anctionStart(MainActivity.this, agenda.getName(), agenda.getDescription(),
+                                Tools.formatTime(agenda.getTime()), Tools.formatTime(agenda.getEndTime()),
+                                agenda.getValue(), agenda.isDone(), true, agenda.getInterval(), agenda.getMaxValue(),
+                                Constant.RESULT_MOD_TAG);
+                    }else{
+                        TargetActivity.anctionStart(MainActivity.this, target.getName(), target.getDescription(),
+                                Tools.formatTime(target.getTime()), Tools.formatTime(target.getEndTime()),
+                                target.getValue(), target.isDone(), false, 0, 0, Constant.RESULT_MOD_TAG);
+                    }
                 }
                 else
                 {

@@ -20,8 +20,8 @@ public class Scheme implements Evalueable, Serializable
     boolean checked = false;
     int sumValue = 0;
     ArrayList<Target> targets = new ArrayList<Target>();
-    private int yesterdayValue;
-    private int todayValue;
+    private int yesterdayValue = 0;
+    private int todayValue = 0;
 
     public Scheme()
     {

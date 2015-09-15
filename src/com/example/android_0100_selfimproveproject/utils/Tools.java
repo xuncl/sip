@@ -71,6 +71,21 @@ public class Tools
         }
         return stime;
     }
+    
+    @SuppressLint("SimpleDateFormat")
+    public static Date parseTimeByDate(String date, String time)
+    {
+        SimpleDateFormat sdf2 = new SimpleDateFormat(Constant.DATE_FOMMAT_PATTERN + Constant.TIME_FOMMAT_PATTERN);
+        Date stime = new Date();
+        try
+        {
+            stime = sdf2.parse(date + time);
+        }
+        catch (ParseException e)
+        {
+        }
+        return stime;
+    }
 
     public static Target getTargetByScheme(Scheme scheme, String name)
     {
