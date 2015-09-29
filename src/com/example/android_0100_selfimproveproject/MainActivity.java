@@ -200,7 +200,7 @@ public class MainActivity extends BaseActivity implements OnClickListener
 
     private boolean fetchAll()
     {
-        Toast.makeText(MainActivity.this, "fectching...", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(MainActivity.this, "fetching...", Toast.LENGTH_SHORT).show();
         refreshTargets();
         return false;
     }
@@ -215,7 +215,7 @@ public class MainActivity extends BaseActivity implements OnClickListener
 
     private void deleteTarget(Target target)
     {
-        Toast.makeText(MainActivity.this, "deleting...", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(MainActivity.this, "deleting...", Toast.LENGTH_SHORT).show();
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         DataDeleter.deleteTarget(db, target);
         scheme.getTargets().remove(target);
@@ -226,7 +226,7 @@ public class MainActivity extends BaseActivity implements OnClickListener
 
     private boolean saveAll()
     {
-        Toast.makeText(MainActivity.this, "saving...", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(MainActivity.this, "saving...", Toast.LENGTH_SHORT).show();
         saveTodayTargets();
         return false;
     }

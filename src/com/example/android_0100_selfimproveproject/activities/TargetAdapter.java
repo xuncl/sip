@@ -67,8 +67,9 @@ public class TargetAdapter extends ArrayAdapter<Target>
                 ImageView ib = (ImageView) v;
                 Target tgt = (Target) v.getTag();
                 tgt.check();
-                Toast.makeText(TargetAdapter.this.getContext(), tgt.getName() + "is done? " + tgt.isDone(),
-                        Toast.LENGTH_SHORT).show();
+                // Toast.makeText(TargetAdapter.this.getContext(), tgt.getName()
+                // + "is done? " + tgt.isDone(),
+                // Toast.LENGTH_SHORT).show();
                 if (tgt.isDone())
                 {
                     ib.setImageResource(R.drawable.target_setdone);
