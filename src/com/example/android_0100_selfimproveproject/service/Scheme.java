@@ -22,6 +22,8 @@ public class Scheme implements Evalueable, Serializable
     ArrayList<Target> targets = new ArrayList<Target>();
     private int yesterdayValue = 0;
     private int todayValue = 0;
+    boolean isVerified = false;
+
 
     public Scheme()
     {
@@ -140,6 +142,16 @@ public class Scheme implements Evalueable, Serializable
     public void setTargets(ArrayList<Target> targets)
     {
         this.targets = targets;
+    }
+
+    public boolean isVerified()
+    {
+        return isVerified;
+    }
+
+    public void setVerified(boolean isVerified)
+    {
+        this.isVerified = isVerified;
     }
 
     @SuppressLint("SimpleDateFormat")

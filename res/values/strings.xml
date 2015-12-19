@@ -16,8 +16,8 @@
     <string name="target_value">事项分值</string>
     <string name="target_isdone">标记完成</string>
     <string name="target_isagenda">标记日常</string>
-    <string name="target_interval">最大分值</string>
-    <string name="target_maxvalue">增量分值</string>
+    <string name="target_interval">增量分值</string>
+    <string name="target_maxvalue">最大分值</string>
     <string name="hint_time">HH:mm格式</string>
     <string name="hint_value">按照重要程度填写整数值</string>
     <string name="hint_interval">坚持日常事件奖励每天的分值增量</string>
