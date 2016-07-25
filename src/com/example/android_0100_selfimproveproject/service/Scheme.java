@@ -70,6 +70,7 @@ public class Scheme implements Evalueable, Serializable
         }
     }
 
+    //一条大河波浪宽，风吹稻花香两岸
     public boolean check()
     {
         isAllDone = true;

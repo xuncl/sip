@@ -18,6 +18,7 @@ import android.database.sqlite.SQLiteDatabase;
 public class DataFetcher
 {
     @SuppressLint("SimpleDateFormat")
+     public static SimpleDateFormat sdf = new SimpleDateFormat(Constant.DATE_FOMMAT_PATTERN);
     /**
      * Get the day's scheme. If there is none, build a new scheme by the day
      * before. If the day before is still none, return null.
@@ -29,22 +30,44 @@ public class DataFetcher
     public static Scheme fetchScheme(SQLiteDatabase db, Date date)
     {
         Scheme scheme;
-        SimpleDateFormat sdf = new SimpleDateFormat(Constant.DATE_FOMMAT_PATTERN);
         scheme = fetchOnceByDate(db, sdf.format(date));
+//        if (null == scheme)
+//        {
+//            Scheme yesterdayScheme = fetchOnceByDate(db, sdf.format(Tools.prevDay(date)));
+//            if (null != yesterdayScheme)
+//            {
+//                scheme = new Scheme(yesterdayScheme);
+//                DataUpdater.insertScheme(db, scheme);
+//            }
+//            else
+//            {
+//                scheme = new Scheme();
+//            }
+//        }
+
         if (null == scheme)
         {
-            Scheme yesterdayScheme = fetchOnceByDate(db, sdf.format(Tools.prevDay(date)));
-            if (null != yesterdayScheme)
-            {
-                scheme = new Scheme(yesterdayScheme);
-                DataUpdater.insertScheme(db, scheme);
-            }
-            else
-            {
-                scheme = new Scheme();
-            }
+            scheme = new Scheme (getPreviousByScheme(db, Tools.prevDay(date)));
+            DataUpdater.insertScheme(db, scheme);
         }
         return scheme;
+    }
+
+    /**
+     * 获取前一日期的scheme，如果没有，会继续向前迭代。
+     * @param db
+     * @param prevDay
+     * @return
+     */
+    private static Scheme getPreviousByScheme(SQLiteDatabase db,Date prevDay)
+    {
+        Scheme scheme = fetchOnceByDate(db, sdf.format(prevDay));
+        if (scheme==null) {
+            scheme = new Scheme(getPreviousByScheme(db, Tools.prevDay(prevDay)));
+            DataUpdater.insertScheme(db, scheme);
+        }
+        return scheme;
+        
     }
 
     private static Scheme fetchOnceByDate(SQLiteDatabase db, String date)
